@@ -87,24 +87,42 @@ const int& Enemy::getType() const
 	return this->type;
 }
 
+const float& Enemy::getVelocityX() const
+{
+	return this->velocity.x;
+}
+
+const float& Enemy::getVelocityY() const
+{
+	return this->velocity.y;
+}
+
 void Enemy::updateVelocity()
 {
 	this->resetTimer += 0.2f; 
 	if (this->resetTimer >= this->resetTimerMax)
 	{
-		switch (this->type)
+		int r = rand() % 4 + 1;
+		switch (r)
 		{
 		case 1:
-			this->velocity = sf::Vector2f(- static_cast<float>(rand() % 4) + 0.1f, - static_cast<float>(rand() % 4) + 0.1f);
+			this->velocity = sf::Vector2f(- static_cast<float>(rand() % 4) + 0.1f, static_cast<float>(rand() % 4) + 0.1f);
 			break;
 		case 2:
+			this->velocity = sf::Vector2f(static_cast<float>(rand() % 4) + 0.1f, - static_cast<float>(rand() % 4) + 0.1f);
+			break;
+		case 3:
 			this->velocity = sf::Vector2f(static_cast<float>(rand() % 4) + 0.1f, static_cast<float>(rand() % 4) + 0.1f);
+			break;
+		case 4:
+			this->velocity = sf::Vector2f(- static_cast<float>(rand() % 4) + 0.1f, - static_cast<float>(rand() % 4) + 0.1f);
 			break;
 		}
 		this->resetTimer = 0;
 		this->resetTimerMax = static_cast<float>(rand() % 60 + 10.f);
 	}
 }
+
 
 void Enemy::setOnGround(const bool g)
 {
