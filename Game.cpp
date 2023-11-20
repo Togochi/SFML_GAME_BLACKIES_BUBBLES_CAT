@@ -214,6 +214,7 @@ unsigned counter = 0;
 
 	for (auto* e : this->enemies)
 	{
+		e->update();
 		//Left collision
 		if (e->getBounds().left < 0)
 		{
@@ -325,12 +326,8 @@ void Game::updateEnemies()
 		this->spawnTimerMaxEnem = static_cast<float>(rand() % 40 + 20.f);
 	}
 
-
-	for (auto* e : this->enemies)
-	{
-		e->update();
-	}
 }
+
 
 
 void Game::updateGUI()
