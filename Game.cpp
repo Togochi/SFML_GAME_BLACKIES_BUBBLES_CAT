@@ -208,55 +208,61 @@ void Game::updateCollision()
 
 void Game::updateEnemyCollision()
 {
-//Update enemy collision
-	
-unsigned counter = 0;
+	//Update enemy collision
+	unsigned counter = 0;
 
 	for (auto* e : this->enemies)
 	{
-		e->update();
-		//Left collision
-		if (e->getBounds().left < 0)
+
+		//Player collision
+		bool isDeleted = false;
+
+		if (e->getBounds().intersects(this->player->getPlayerBounds()))
 		{
-			e->setDir(-1.f);
-		}
-
-		else if (e->getBounds().left + e->getBounds().width > window->getSize().x)
-		{
-			e->setDir(-1.f);
-		}
-
-		if (e->getBounds().top < 0)
-		{
-			e->setDir(-1.f);
-		}
-
-		else if (e->getBounds().top + e->getBounds().height > window->getSize().y)
-		{
-			e->setDir(-1.f);
-		}
-
-		//Collision with player
-
-			if (e->getBounds().intersects(this->player->getPlayerBounds()))
+			if (this->player->getPlayerBounds().top + this->player->getPlayerBounds().height < e->getBounds().top + 6)
 			{
-				if (this->player->getPlayerBounds().top + this->player->getPlayerBounds().height < e->getBounds().top + 6)
-				{
-					this->eatSound.play();
-					this->player->gainHp(e->getPoints() * 2);
-					this->points += e->getPoints();
-				}
-				else
-				{
-					this->meowSound.play();
-					this->player->loseHp(e->getDamage());
-				}
+				this->eatSound.play();
+				this->player->gainHp(e->getPoints() * 2);
+				this->points += e->getPoints();
 
-				delete this->enemies.at(counter);
-				this->enemies.erase(this->enemies.begin() + counter);
 			}
+			else
+			{
+				this->meowSound.play();
+				this->player->loseHp(e->getDamage());
+			}
+
+			delete this->enemies.at(counter);
+			this->enemies.erase(this->enemies.begin() + counter);
+			isDeleted = true;
+		}
+
+		if (!isDeleted) {
+			//Left collision
+
+			if (e->getBounds().left < 0)
+			{
+				e->setDir(-1.f);
+			}
+
+			if (e->getBounds().left + e->getBounds().width > window->getSize().x)
+			{
+				e->setDir(-1.f);
+			}
+
+			if (e->getBounds().top < 0)
+			{
+				e->setDir(-1.f);
+			}
+
+			if (e->getBounds().top + e->getBounds().height > window->getSize().y)
+			{
+				e->setDir(-1.f);
+			}
+		}
 		++counter;
 	}
+
 }
 
 
@@ -326,8 +332,9 @@ void Game::updateEnemies()
 		this->spawnTimerMaxEnem = static_cast<float>(rand() % 40 + 20.f);
 	}
 
-}
+	for (auto* e : this->enemies) e->update();
 
+}
 
 
 void Game::updateGUI()
@@ -352,8 +359,8 @@ void Game::update()
 		this->updatePlayer();
 		this->updateBubbles();
 		this->updateCollision();
-		this->updateEnemies();
 		this->updateEnemyCollision();
+		this->updateEnemies();
 	}
 }
 
