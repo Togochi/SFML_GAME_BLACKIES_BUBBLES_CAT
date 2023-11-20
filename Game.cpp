@@ -208,16 +208,15 @@ void Game::updateCollision()
 
 void Game::updateEnemyCollision()
 {
-	//Update enemy collision
-	unsigned counter = 0;
+//Update enemy collision
+	
+unsigned counter = 0;
 
 	for (auto* e : this->enemies)
 	{
-
 		//Left collision
 		if (e->getBounds().left < 0)
 		{
-			
 			e->setDir(-1.f);
 		}
 
@@ -236,7 +235,7 @@ void Game::updateEnemyCollision()
 			e->setDir(-1.f);
 		}
 
-			//Player collision
+		//Collision with player
 
 			if (e->getBounds().intersects(this->player->getPlayerBounds()))
 			{
@@ -245,7 +244,6 @@ void Game::updateEnemyCollision()
 					this->eatSound.play();
 					this->player->gainHp(e->getPoints() * 2);
 					this->points += e->getPoints();
-
 				}
 				else
 				{
@@ -256,9 +254,9 @@ void Game::updateEnemyCollision()
 				delete this->enemies.at(counter);
 				this->enemies.erase(this->enemies.begin() + counter);
 			}
-			++counter;
-		}
+		++counter;
 	}
+}
 
 
 
