@@ -213,53 +213,53 @@ void Game::updateEnemyCollision()
 
 	for (auto* e : this->enemies)
 	{
-		e->update();
 
 		//Left collision
-		if (e->getBounds().left - e->getBounds().width / 2 <= 0)
+		if (e->getBounds().left < 0)
+		{
+			
+			e->setDir(-1.f);
+		}
+
+		else if (e->getBounds().left + e->getBounds().width > window->getSize().x)
 		{
 			e->setDir(-1.f);
 		}
 
-		if (e->getBounds().left + e->getBounds().width / 2 >= window->getSize().x)
+		if (e->getBounds().top < 0)
 		{
 			e->setDir(-1.f);
 		}
 
-		if (e->getBounds().top <= 0)
+		else if (e->getBounds().top + e->getBounds().height > window->getSize().y)
 		{
 			e->setDir(-1.f);
 		}
 
-	    if (e->getBounds().top + e->getBounds().height >= window->getSize().y)
-		{
-			e->setDir(-1.f);
-		}
+			//Player collision
 
-		//Player collision
-		//bool isCollision = false;
-
-		if (e->getBounds().intersects(this->player->getPlayerBounds()))
-		{
-			if (this->player->getPlayerBounds().top + this->player->getPlayerBounds().height < e->getBounds().top + 6)
+			if (e->getBounds().intersects(this->player->getPlayerBounds()))
 			{
-				this->eatSound.play();
-				this->player->gainHp(e->getPoints()*2);
-				this->points += e->getPoints();
-				
-			}
-			else
-			{
-				this->meowSound.play();
-				this->player->loseHp(e->getDamage());
-			}
+				if (this->player->getPlayerBounds().top + this->player->getPlayerBounds().height < e->getBounds().top + 6)
+				{
+					this->eatSound.play();
+					this->player->gainHp(e->getPoints() * 2);
+					this->points += e->getPoints();
 
-			delete this->enemies.at(counter);
-			this->enemies.erase(this->enemies.begin() + counter);
+				}
+				else
+				{
+					this->meowSound.play();
+					this->player->loseHp(e->getDamage());
+				}
+
+				delete this->enemies.at(counter);
+				this->enemies.erase(this->enemies.begin() + counter);
+			}
+			++counter;
 		}
-		++counter;
 	}
-}
+
 
 
 void Game::updatePlayer()
@@ -326,6 +326,12 @@ void Game::updateEnemies()
 		this->spawnTimerEnem = 0.f;
 		this->spawnTimerMaxEnem = static_cast<float>(rand() % 40 + 20.f);
 	}
+
+
+	for (auto* e : this->enemies)
+	{
+		e->update();
+	}
 }
 
 
@@ -347,12 +353,12 @@ void Game::update()
 	this->updatePollEvents();
 
 	if (!this->paused) {
+		this->updateGUI();
 		this->updatePlayer();
-		this->updateCollision();
 		this->updateBubbles();
+		this->updateCollision();
 		this->updateEnemies();
 		this->updateEnemyCollision();
-		this->updateGUI();
 	}
 }
 
@@ -385,6 +391,8 @@ void Game::render()
 
 	this->renderPlayer();
 
+	this->renderGUI();
+
 
 	//Render enemies
 	for (auto* e : this->enemies)
@@ -392,7 +400,6 @@ void Game::render()
 		e->render(*this->window);
 	}
 
-	this->renderGUI();
 
 	if (this->paused) this->window->draw(this->pauseText);
 	if (this->player->getHp() <= 0) this->window->draw(this->gameOverText);
