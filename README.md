@@ -6,8 +6,8 @@ Using a jump, you can jump to the top of the bubbles, but not above the upper bo
 Blackheads appear in a random place on the game screen near one of the sides. Their generation and movement are determined randomly using random timers.
 
 If the cat collides with a blackie, the blackie will disappear.
-If the cat was above the blackie at the same time, you will hear a faint crunch and the cat will heal from 1 to 4 hp and get from 1 to 4 points accordingly. 
-In all other cases, you will hear "meow" and the cat will receive from 5 to 20 damage.
+If the cat was above the blackie at the same time, you will hear a faint crunch and the cat will heal from 1 to 3 hp and get from 1 to 3 points accordingly. 
+In all other cases, you will hear "meow" and the cat will receive from 5 to 15 damage.
 
 This project also implemented a health bar and animation of a cat.
 The game has a "Game over" and "Pause" function (press the P key).
