@@ -206,66 +206,6 @@ void Game::updateCollision()
 	}
 }
 
-void Game::updateEnemyCollision()
-{
-	//Update enemy collision
-	unsigned counter = 0;
-
-	for (auto* e : this->enemies)
-	{
-
-		//Player collision
-		bool isDeleted = false;
-
-		if (e->getBounds().intersects(this->player->getPlayerBounds()))
-		{
-			if (this->player->getPlayerBounds().top + this->player->getPlayerBounds().height < e->getBounds().top + 6)
-			{
-				this->eatSound.play();
-				this->player->gainHp(e->getPoints() * 2);
-				this->points += e->getPoints();
-
-			}
-			else
-			{
-				this->meowSound.play();
-				this->player->loseHp(e->getDamage());
-			}
-
-			delete this->enemies.at(counter);
-			this->enemies.erase(this->enemies.begin() + counter);
-			isDeleted = true;
-		}
-
-		if (!isDeleted) {
-			//Left collision
-
-			if (e->getBounds().left < 0)
-			{
-				e->setDir(-1.f);
-			}
-
-			if (e->getBounds().left + e->getBounds().width > window->getSize().x)
-			{
-				e->setDir(-1.f);
-			}
-
-			if (e->getBounds().top < 0)
-			{
-				e->setDir(-1.f);
-			}
-
-			if (e->getBounds().top + e->getBounds().height > window->getSize().y)
-			{
-				e->setDir(-1.f);
-			}
-		}
-		++counter;
-	}
-
-}
-
-
 
 void Game::updatePlayer()
 {
@@ -332,7 +272,67 @@ void Game::updateEnemies()
 		this->spawnTimerMaxEnem = static_cast<float>(rand() % 40 + 20.f);
 	}
 
-	for (auto* e : this->enemies) e->update();
+	unsigned counter = 0;
+
+	for (auto* e : this->enemies)
+	{    
+		//Player collision
+		bool isDeleted = false;
+
+		if (e->getBounds().intersects(this->player->getPlayerBounds()))
+		{
+
+			if (this->player->getPlayerBounds().top + this->player->getPlayerBounds().height < e->getBounds().top + 6)
+			{
+				this->eatSound.play();
+				this->player->gainHp(e->getPoints());
+				this->points += e->getPoints();
+			}
+			else
+			{
+				this->meowSound.play();
+				this->player->loseHp(e->getDamage());
+			}
+
+			delete this->enemies.at(counter);
+			this->enemies.erase(this->enemies.begin() + counter);
+			isDeleted = true;
+		}
+
+
+		if (!isDeleted) {
+
+			e->update();
+			
+			//Screen collision
+
+			if (e->getBounds().left < 0)
+			{
+				if (e->getVelocityX() < 0)
+				e->setDir(-1.f);
+			}
+
+			else if (e->getBounds().left + e->getBounds().width > window->getSize().x)
+			{
+				if (e->getVelocityX() > 0)
+				e->setDir(-1.f);
+			}
+
+			else if (e->getBounds().top < 0)
+			{
+				if (e->getVelocityY() < 0)
+				e->setDir(-1.f);
+			}
+
+			else if (e->getBounds().top + e->getBounds().height > window->getSize().y)
+			{
+				if (e->getVelocityY() > 0)
+				e->setDir(-1.f);
+			}
+			++counter;
+
+		}
+	}
 
 }
 
@@ -359,7 +359,6 @@ void Game::update()
 		this->updatePlayer();
 		this->updateBubbles();
 		this->updateCollision();
-		this->updateEnemyCollision();
 		this->updateEnemies();
 	}
 }
