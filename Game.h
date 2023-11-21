@@ -64,7 +64,6 @@ public:
 	void togglePause();
 	void updatePollEvents();
 	void updateCollision();
-	void updateEnemyCollision();
 	void updatePlayer();
 	void updateBubbles();
 	void updateEnemies();
